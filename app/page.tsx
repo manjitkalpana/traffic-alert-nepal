@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
+import type { FormEvent } from "react";
 import { AlertTriangle, ArrowRight, CheckCircle2, Clock3, MapPin, Menu, Plus, ShieldCheck, TrafficCone, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
@@ -41,7 +42,7 @@ export default function Home() {
       .then(({ data }) => { if (data?.length) setReports(data as Report[]); });
   }, []);
   const visible = useMemo(() => reports.filter(r => filter === "all" || r.category === filter), [reports, filter]);
-  async function submitReport(e: React.FormEvent) {
+  async function submitReport(e: FormEvent) {
     e.preventDefault(); setNotice("");
     const payload = { ...form, lat: Number(form.lat), lng: Number(form.lng), status: "pending" };
     if (!form.title.trim() || !form.area.trim() || !form.details.trim() || !Number.isFinite(payload.lat) || !Number.isFinite(payload.lng)) {
