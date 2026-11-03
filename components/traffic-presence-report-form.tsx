@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Camera, Send } from "lucide-react";
+import { Camera, Send, LocateFixed } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export default function TrafficPresenceReportForm({ lang }: { lang: "en" | "ne" }) {
@@ -11,8 +11,31 @@ export default function TrafficPresenceReportForm({ lang }: { lang: "en" | "ne" 
   const [details, setDetails] = useState("");
   const [observedAt, setObservedAt] = useState("");
   const [photos, setPhotos] = useState<File[]>([]);
+  const [approxLocation, setApproxLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [locating, setLocating] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+
+  function useCurrentLocation() {
+    if (!navigator.geolocation) {
+      setMessage(ne ? "यो ब्राउजरले स्थान सुविधा समर्थन गर्दैन।" : "Geolocation is not supported by this browser.");
+      return;
+    }
+    setLocating(true);
+    setMessage("");
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        // Keep only a coarse neighborhood-level location; never save exact GPS coordinates.
+        setApproxLocation({ lat: Number(coords.latitude.toFixed(2)), lng: Number(coords.longitude.toFixed(2)) });
+        setLocating(false);
+      },
+      () => {
+        setMessage(ne ? "स्थान अनुमति दिनुहोस् वा क्षेत्र आफैँ लेख्नुहोस्।" : "Allow location access or enter the area manually.");
+        setLocating(false);
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+    );
+  }
 
   async function submitReport(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -51,6 +74,8 @@ export default function TrafficPresenceReportForm({ lang }: { lang: "en" | "ne" 
         area: area.trim(),
         observed_at: new Date(observedAt).toISOString(),
         details: details.trim(),
+        approx_lat: approxLocation?.lat ?? null,
+        approx_lng: approxLocation?.lng ?? null,
         photo_paths: uploaded,
         status: "pending",
         expires_at: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString()
@@ -61,6 +86,7 @@ export default function TrafficPresenceReportForm({ lang }: { lang: "en" | "ne" 
       setDetails("");
       setObservedAt("");
       setPhotos([]);
+      setApproxLocation(null);
       const input = document.getElementById("traffic-presence-photos") as HTMLInputElement | null;
       if (input) input.value = "";
       setMessage(ne ? "३ फोटोसहित रिपोर्ट समीक्षाका लागि पठाइयो।" : "Report submitted with 3 photos for moderator review.");
@@ -100,6 +126,13 @@ export default function TrafficPresenceReportForm({ lang }: { lang: "en" | "ne" 
               {ne ? "सामान्य क्षेत्र / टोल" : "General area / neighborhood"}
               <input required minLength={3} maxLength={120} value={area} onChange={(e) => setArea(e.target.value)} placeholder={ne ? "उदाहरण: बजार क्षेत्र" : "e.g. market area"} className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-3 font-normal" />
             </label>
+          </div>
+          <div className="rounded-xl border border-slate-200 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div><p className="text-sm font-semibold text-slate-700">{ne ? "हालको सामान्य स्थान" : "Approximate current location"}</p><p className="mt-1 text-xs text-slate-500">{approxLocation ? (ne ? "सामान्य स्थान सुरक्षित रूपमा थपियो।" : "Approximate location added.") : (ne ? "वैकल्पिक: GPS अनुमति दिएर सामान्य क्षेत्र थप्नुहोस्।" : "Optional: allow GPS to add your approximate area.")}</p></div>
+              <button type="button" onClick={useCurrentLocation} disabled={locating} className="inline-flex items-center gap-2 rounded-lg border border-blue-200 px-3 py-2 text-sm font-semibold text-blue-800 disabled:opacity-50"><LocateFixed size={16} />{locating ? (ne ? "स्थान खोज्दै..." : "Locating...") : (ne ? "हालको स्थान प्रयोग गर्नुहोस्" : "Use current location")}</button>
+            </div>
+            <p className="mt-2 text-xs text-slate-500">{ne ? "गोपनीयताका लागि GPS स्थान करिब १ किमि स्तरमा मात्र राखिन्छ; ठ्याक्कै निर्देशांक भण्डारण हुँदैन।" : "For privacy, GPS is rounded to roughly neighborhood scale (~1 km); exact coordinates are never stored. This location is private to moderators."}</p>
           </div>
           <label className="block text-sm font-semibold text-slate-700">
             {ne ? "देखिएको मिति र समय" : "Date and time observed"}
