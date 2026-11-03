@@ -1,11 +1,9 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useState } from "react";
 import { MapPin, Phone, ShieldCheck, ExternalLink, TrafficCone } from "lucide-react";
 import TrafficPresenceReportForm from "@/components/traffic-presence-report-form";
 
-const TrafficMap = dynamic(() => import("@/components/traffic-map"), { ssr: false });
 
 type TrafficOffice = {
   id: string;
@@ -67,7 +65,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
           <a href="#" className="flex items-center gap-3">
             <span className="rounded-xl bg-blue-700 p-2 text-white"><TrafficCone size={24} /></span>
-            <span><strong className="block text-lg tracking-tight">Traffic Alert Nepal</strong><small className="text-slate-500">{ne ? "ट्राफिक प्रहरी कार्यालय नक्सा" : "Traffic police office map"}</small></span>
+            <span><strong className="block text-lg tracking-tight">Traffic Alert Nepal</strong><small className="text-slate-500">{ne ? "ट्राफिक प्रहरी कार्यालय निर्देशिका" : "Traffic police office directory"}</small></span>
           </a>
           <div className="flex items-center gap-3">
             <span className="hidden text-sm text-slate-500 sm:inline">{ne ? "कञ्चनपुर · कैलाली" : "Kanchanpur · Kailali"}</span>
@@ -80,31 +78,12 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-5 py-14 md:py-20">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-bold tracking-widest text-blue-100"><ShieldCheck size={15} />{ne ? "सार्वजनिक जानकारी" : "PUBLIC DIRECTORY"}</div>
           <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight md:text-6xl">{ne ? "ट्राफिक प्रहरी कार्यालयहरू कहाँ छन्?" : "Find traffic police offices."}</h1>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-blue-100">{ne ? "कञ्चनपुर र कैलालीका सार्वजनिक रूपमा सूचीकृत ट्राफिक प्रहरी कार्यालयहरूको नक्सा र सम्पर्क विवरण।" : "A simple map and contact directory of publicly listed traffic police offices in Kanchanpur and Kailali."}</p>
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-blue-100">{ne ? "कञ्चनपुर र कैलालीका सार्वजनिक रूपमा सूचीकृत ट्राफिक प्रहरी कार्यालयहरूको सम्पर्क विवरण।" : "Contact details for publicly listed traffic police offices in Kanchanpur and Kailali."}</p>
           <div className="mt-7 flex flex-wrap gap-3 text-sm">
             <span className="rounded-full bg-white/10 px-4 py-2">{ne ? "स्थायी सार्वजनिक कार्यालयहरू मात्र" : "Permanent public offices only"}</span>
             <span className="rounded-full bg-white/10 px-4 py-2">{ne ? "लाइभ चेकिङ लोकेसन छैन" : "No live checkpoint locations"}</span>
           </div>
         </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-5 py-10">
-        <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-xs font-bold tracking-widest text-blue-700">{ne ? "नक्सा" : "MAP"}</p>
-            <h2 className="mt-1 text-2xl font-extrabold">{ne ? "ट्राफिक प्रहरी कार्यालयको स्थान" : "Traffic police office locations"}</h2>
-            <p className="mt-1 text-sm text-slate-500">{ne ? "OpenStreetMap द्वारा सञ्चालित" : "Powered by OpenStreetMap"}</p>
-          </div>
-          <select value={district} onChange={(event) => setDistrict(event.target.value as typeof district)} className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm">
-            <option value="All">{ne ? "सबै जिल्ला" : "All districts"}</option>
-            <option value="Kanchanpur">Kanchanpur</option>
-            <option value="Kailali">Kailali</option>
-          </select>
-        </div>
-        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white p-2 shadow-sm">
-          <div className="h-[420px] overflow-hidden rounded-2xl"><TrafficMap locations={visible} /></div>
-        </div>
-        <p className="mt-3 text-xs leading-5 text-slate-500">{ne ? "नक्साका पिनहरू सार्वजनिक कार्यालयका स्थान हुन्, प्रहरीको तैनाथी वा चेकिङ भइरहेको स्थान होइनन्।" : "Pins identify public office locations, not where officers are deployed or where checks are happening."}</p>
       </section>
 
       <TrafficPresenceReportForm lang={lang} />
