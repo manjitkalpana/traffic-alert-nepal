@@ -109,7 +109,7 @@ export default function Home() {
           <a href="tel:103" className="inline-flex w-fit items-center gap-2 rounded-xl bg-blue-700 px-5 py-3 font-bold text-white hover:bg-blue-800"><Phone size={18} />103</a>
         </div>
       </section>
-      <footer className="mx-auto flex max-w-7xl flex-wrap justify-between gap-3 px-5 py-8 text-xs text-slate-500"><span>© {new Date().getFullYear()} Traffic Alert Nepal</span><span>{ne ? "कार्यालय विवरण नेपाल प्रहरीको सार्वजनिक निर्देशिकाबाट।" : "Office contacts sourced from the public Nepal Police directory."}</span></footer>
+      <footer className="mx-auto flex max-w-7xl flex-wrap justify-between gap-3 px-5 py-8 text-xs text-slate-500"><span>© {new Date().getFullYear()} Traffic Alert Nepal</span><span>{ne ? "कार्यालय विवरण नेपाल प्रहरीको सार्वजनिक निर्देशिकाबाट।" : "Office contacts sourced from the public Nepal Police directory."}</span><a href="/admin" className="font-semibold text-slate-500 hover:text-blue-700">Admin</a></footer>
     </main>
   );
 }
