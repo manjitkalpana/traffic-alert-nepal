@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { MapPin, Phone, ShieldCheck, ExternalLink, TrafficCone } from "lucide-react";
+import TrafficPresenceReportForm from "@/components/traffic-presence-report-form";
 
 const TrafficMap = dynamic(() => import("@/components/traffic-map"), { ssr: false });
 
@@ -105,6 +106,8 @@ export default function Home() {
         </div>
         <p className="mt-3 text-xs leading-5 text-slate-500">{ne ? "नक्साका पिनहरू सार्वजनिक कार्यालयका स्थान हुन्, प्रहरीको तैनाथी वा चेकिङ भइरहेको स्थान होइनन्।" : "Pins identify public office locations, not where officers are deployed or where checks are happening."}</p>
       </section>
+
+      <TrafficPresenceReportForm lang={lang} />
 
       <section className="mx-auto max-w-7xl px-5 pb-16">
         <div className="mb-5"><p className="text-xs font-bold tracking-widest text-blue-700">{ne ? "सम्पर्क विवरण" : "CONTACT DIRECTORY"}</p><h2 className="mt-1 text-2xl font-extrabold">{ne ? "सूचीकृत कार्यालयहरू" : "Listed offices"}</h2></div>
