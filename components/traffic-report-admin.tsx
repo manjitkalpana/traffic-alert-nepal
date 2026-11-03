@@ -31,10 +31,11 @@ export default function TrafficReportAdmin() {
   const [busyId, setBusyId] = useState("");
 
   const loadReports = useCallback(async () => {
-    if (!supabase) return;
+    const client = supabase;
+    if (!client) return;
     setLoading(true);
     setMessage("");
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from("traffic_presence_reports")
       .select("id,district,area,observed_at,details,photo_paths,status,created_at,expires_at,approx_lat,approx_lng")
       .eq("status", "pending")
@@ -48,7 +49,7 @@ export default function TrafficReportAdmin() {
     const rows = (data ?? []) as Report[];
     const withPhotos = await Promise.all(rows.map(async (report) => {
       const urls = await Promise.all(report.photo_paths.map(async (path) => {
-        const { data: signed, error: signError } = await supabase.storage
+        const { data: signed, error: signError } = await client.storage
           .from("traffic-report-photos")
           .createSignedUrl(path, 60 * 5);
         return signError ? "" : signed.signedUrl;
