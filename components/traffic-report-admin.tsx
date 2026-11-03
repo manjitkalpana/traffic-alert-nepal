@@ -93,11 +93,6 @@ export default function TrafficReportAdmin() {
 
   useEffect(() => {
     void checkAdmin();
-    if (!supabase) return;
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      void checkAdmin();
-    });
-    return () => listener.subscription.unsubscribe();
   }, [checkAdmin]);
 
   async function signIn(event: FormEvent<HTMLFormElement>) {
